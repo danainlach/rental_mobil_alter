@@ -14,90 +14,65 @@
 
 
 <body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-xs">
-    <div class="container">
-        <a class="navbar-brand text-primary" href="#">InventoryApp</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav">
-                <!-- Informasi User -->
-                <li class="nav-item">
-                    <span class="nav-link text-muted" id="user-info">
-                        <% if (user) { %>
-                        Welcome, <%= user.username %>
-                        <% } else { %>
-                        Welcome, Guest
-                        <% } %>
-                    </span>
-                </li>
-                <!-- Tombol Login atau Logout -->
-                <li class="nav-item">
-                    <% if (user) { %>
-                    <a class="btn btn-danger btn-sm ms-3" href="/logout" id="logout-button">Logout</a>
-                    <% } else { %>
-                    <a class="btn btn-primary btn-sm ms-3" href="/login" id="login-button">Login</a>
-                    <% } %>
-                </li>
-            </ul>
-        </div>
-    </div>
-    </nav>
+    <%- include('partials/navbar') %>
 
-    <div class="container mt-5">
-        <h1 id="judul" class="text-primary text-center mb-4">Data Item</h1>
-        <div class="d-flex justify-content-end mb-3">
-            <% if (user.role === "Admin") { %>
-            <a id="baru" href="/tambah" class="btn btn-primary">Tambah Data Baru</a>
-            <% } %>
-        </div>
-        <table class="table table-bordered table-striped">
-            <thead class="table-primary">
-                <tr>
-                    <th>No.</th>
-                    <th>Nama Mobil</th>
-                    <th>Stok Mobil</th>
-                    <th>Harga Sewa Mobil</th>
-                    <th>Keterangan Mobil</th>
-                    <% if (user.role === "Admin") { %>
-                    <th colspan="2" class="text-center">Aksi</th>
-                    <% } %>
-                    <% if (user.role === "User") { %>
-                        <th colspan="2">Status</th>
-                    <% } %>
-                </tr>
-            </thead>
-            <tbody id="data">
-                <% let nomor = 0; %>
-                <% barang.forEach(items => { %>
-                    <% nomor += 1; %>
+    <div class="main-content">
+        <div class="container">
+            <h1 id="judul" class="text-primary text-center mb-4">Data Item</h1>
+            <div class="d-flex justify-content-end mb-3">
+                <% if (user.role === "Admin") { %>
+                <a id="baru" href="/tambah" class="btn btn-primary">Tambah Data Baru</a>
+                <% } %>
+            </div>
+            <table class="table table-bordered table-striped">
+                <thead class="table-primary">
                     <tr>
-                        <td><%= nomor %></td>
-                        <td><%= items.nama %></td>
-                        <td><%= items.stok %></td>
-                        <td><%= items.harga %></td>
-                        <td><%= items.keterangan %></td>
+                        <th>No.</th>
+                        <th>Nama Mobil</th>
+                        <th>Stok Mobil</th>
+                        <th>Harga Sewa Mobil</th>
+                        <th>Keterangan Mobil</th>
                         <% if (user.role === "Admin") { %>
-                            <td class='text-center'>
-                                <a href='/edit/<%= items.id %>' class="btn btn-warning btn-sm">Edit</a>
-                            </td>
-                            <% if (user.role === "Admin") { %> <!-- Periksa apakah role = admin -->
-                                <td class='text-center'>
-                                    <button onclick="deleteItem('<%= items.id %>')" class="btn btn-danger btn-sm">Hapus</button>
-                                </td>
-                            <% } %>
+                        <th colspan="2" class="text-center">Aksi</th>
                         <% } %>
                         <% if (user.role === "User") { %>
-                            <td>
-                                <a href="/Sewa/<%= items.id %>" class="btn btn-primary">Sewa!!</a>
-                            </td>
+                            <th colspan="2">Status</th>
                         <% } %>
                     </tr>
-                <% }); %>
-            </tbody>
-        </table>
+                </thead>
+                <tbody id="data">
+                    <% let nomor = 0; %>
+                    <% barang.forEach(items => { %>
+                        <% nomor += 1; %>
+                        <tr>
+                            <td><%= nomor %></td>
+                            <td><%= items.nama %></td>
+                            <td><%= items.stok %></td>
+                            <td><%= items.harga %></td>
+                            <td><%= items.keterangan %></td>
+                            <% if (user.role === "Admin") { %>
+                                <td class='text-center'>
+                                    <a href='/edit/<%= items.id %>' class="btn btn-warning btn-sm">Edit</a>
+                                </td>
+                                <% if (user.role === "Admin") { %> <!-- Periksa apakah role = admin -->
+                                    <td class='text-center'>
+                                        <button onclick="deleteItem('<%= items.id %>')" class="btn btn-danger btn-sm">Hapus</button>
+                                    </td>
+                                <% } %>
+                            <% } %>
+                            <% if (user.role === "User") { %>
+                                <td>
+                                    <a href="/Sewa/<%= items.id %>" class="btn btn-primary">Sewa!!</a>
+                                </td>
+                            <% } %>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+            <% if (typeof pagination !== 'undefined') { %>
+                <%- include('partials/pagination', { pagination: pagination }) %>
+            <% } %>
+        </div>
     </div>
 
 
