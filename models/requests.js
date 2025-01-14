@@ -23,7 +23,6 @@ const Requests = sequelize.define("requests", {
     tableName: 'requests'
 });
 
-// Update associations with aliases
 Requests.belongsTo(Items, { 
     foreignKey: 'itemId',
     as: 'Item'
