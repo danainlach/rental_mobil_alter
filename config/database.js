@@ -10,7 +10,7 @@ const sequelize = new Sequelize(
     {
         host: process.env.DB_HOST || 'localhost',
         dialect: "mysql",
-        logging: console.log,  // Enable logging for debugging
+        logging: console.log, 
         pool: {
             max: 5,
             min: 0,
@@ -20,7 +20,7 @@ const sequelize = new Sequelize(
     }
 );
 
-// Test the connection
+// tes koneksi 
 sequelize.authenticate()
     .then(() => {
         console.log('Database connection has been established successfully.');
