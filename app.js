@@ -397,7 +397,6 @@ app.get("/user/history", authToken, async (req, res) => {
     }
 });
 
-// User chat route
 app.get("/user/chat", authToken, async (req, res) => {
     try {
         const user = await Users.findOne({ where: { username: req.user.username } });
@@ -422,7 +421,6 @@ app.get("/user/chat", authToken, async (req, res) => {
     }
 });
 
-// Admin chat routes
 app.get("/admin/chat/:userId?", authToken, async (req, res) => {
     if (req.user.role !== "Admin") {
         return res.status(403).send("Forbidden");
@@ -462,7 +460,6 @@ app.get("/admin/chat/:userId?", authToken, async (req, res) => {
     }
 });
 
-// Add this new route for fetching messages without page reload
 app.get("/admin/chat/:userId/messages", authToken, async (req, res) => {
     if (req.user.role !== "Admin") {
         return res.status(403).json({ error: "Forbidden" });
@@ -486,7 +483,6 @@ app.get("/admin/chat/:userId/messages", authToken, async (req, res) => {
     }
 });
 
-// API endpoint for sending messages
 app.post("/api/messages", authToken, async (req, res) => {
     try {
         const { message, receiverId } = req.body;
