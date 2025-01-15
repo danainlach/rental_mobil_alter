@@ -10,6 +10,7 @@ Website Rental Mobil ini dikembangkan untuk memenuhi kriteria nilai UAS pada mat
 - **Manajemen Mobil**: Admin dapat menambah, mengedit, dan menghapus data mobil yang tersedia untuk disewa.
 - **Pemesanan Mobil**: Pengguna dapat melakukan pemesanan mobil sesuai dengan pilihan yang tersedia.
 - **Riwayat Transaksi**: Pengguna dapat melihat riwayat transaksi sewa mobil mereka.
+- **Fitur Chat**: Pengguna dan Admin dapat berkomunikasi langsung lewat chat.
 
 ## Teknologi yang Digunakan
 - **Node.js**: Untuk menjalankan server Express.js.
