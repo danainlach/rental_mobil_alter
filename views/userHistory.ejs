@@ -27,7 +27,7 @@
                 <% if (requests && requests.length > 0) { %>
                     <% requests.forEach((request, index) => { %>
                         <tr>
-                            <td><%= index + 1 %></td>
+                            <td><%= (pagination.current - 1) * pagination.limit + index + 1 %></td>
                             <td><%= request.Item ? request.Item.nama : 'N/A' %></td>
                             <td><%= new Date(request.createdAt).toLocaleDateString() %></td>
                             <td>
@@ -48,6 +48,10 @@
                 <% } %>
             </tbody>
         </table>
+
+        <% if (typeof pagination !== 'undefined') { %>
+            <%- include('partials/pagination', { pagination: pagination }) %>
+        <% } %>
     </div>
 
     <!-- Bootstrap Bundle with Popper -->

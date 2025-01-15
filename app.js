@@ -389,7 +389,11 @@ app.get("/user/history", authToken, async (req, res) => {
             return res.status(400).send("User not found");
         }
 
-        const requests = await Requests.findAll({
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
+        const { count, rows } = await Requests.findAndCountAll({
             where: { userId: user.id },
             include: [
                 { 
@@ -397,13 +401,23 @@ app.get("/user/history", authToken, async (req, res) => {
                     as: 'Item'
                 }
             ],
+            limit: limit,
+            offset: offset,
             order: [['createdAt', 'DESC']]
         });
 
+        const totalPages = Math.ceil(count / limit);
+
         res.render("userHistory", { 
-            requests: requests,
+            requests: rows,
             user: req.user,
-            activeMenu: 'history'
+            activeMenu: 'history',
+            pagination: {
+                current: page,
+                total: totalPages,
+                totalItems: count,
+                limit: limit
+            }
         });
     } catch (err) {
         console.error("Error fetching user history:", err);
