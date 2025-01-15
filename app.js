@@ -312,7 +312,7 @@ app.get("/sewa/:id", authToken, (req, res) => {
             res.render("sewaDetail", {
                 barang: result, // Data barang berdasarkan ID
                 user: req.user,  // Data pengguna yang sedang login
-                activeMenu: 'sewa'  // Add this line
+                activeMenu: 'sewa'  
             });
         } else {
             res.status(404).send("Item not found"); // Item tidak ditemukan
@@ -477,8 +477,8 @@ app.get("/user/chat", authToken, async (req, res) => {
         const user = await Users.findOne({ where: { username: req.user.username } });
         const messages = await Messages.findAll({
             where: {
-                [Op.or]: [ // Use Op.or instead of Sequelize.Op.or
-                    { senderId: user.id, receiverId: 1 }, // Admin ID is 1
+                [Op.or]: [ 
+                    { senderId: user.id, receiverId: 1 }, 
                     { senderId: 1, receiverId: user.id }
                 ]
             },
@@ -513,7 +513,7 @@ app.get("/admin/chat/:userId?", authToken, async (req, res) => {
             selectedUser = await Users.findByPk(req.params.userId);
             messages = await Messages.findAll({
                 where: {
-                    [Op.or]: [ // Use Op.or instead of Sequelize.Op.or
+                    [Op.or]: [ 
                         { senderId: 1, receiverId: req.params.userId },
                         { senderId: req.params.userId, receiverId: 1 }
                     ]
@@ -573,6 +573,106 @@ app.post("/api/messages", authToken, async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send("Error sending message");
+    }
+});
+
+// Admin User Management routes
+app.get("/admin/users", authToken, async (req, res) => {
+    if (req.user.role !== "Admin") {
+        return res.status(403).send("Forbidden");
+    }
+
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
+        const { count, rows } = await Users.findAndCountAll({
+            limit: limit,
+            offset: offset,
+            order: [['id', 'ASC']]
+        });
+
+        const totalPages = Math.ceil(count / limit);
+
+        res.render("adminUsers", {
+            users: rows,
+            user: req.user,
+            activeMenu: 'users',
+            pagination: {
+                current: page,
+                total: totalPages,
+                totalItems: count,
+                limit: limit
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading users");
+    }
+});
+
+// API routes for user management
+app.post("/api/users", authToken, async (req, res) => {
+    if (req.user.role !== "Admin") return res.status(403).json({ message: "Forbidden" });
+
+    try {
+        const { username } = req.body;
+
+        const existingUser = await Users.findOne({ where: { username: username } });
+        if (existingUser) {
+            return res.status(400).json({ message: "Username already exists" });
+        }
+
+        const user = await Users.create(req.body);
+        res.status(201).json(user);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+app.put("/api/users/:id", authToken, async (req, res) => {
+    if (req.user.role !== "Admin") return res.status(403).send("Forbidden");
+
+    try {
+        const { id } = req.params;
+        const updateData = req.body;
+
+        if (!updateData.password) {
+            delete updateData.password;
+        }
+
+        await Users.update(updateData, { where: { id } });
+        res.status(200).json({ message: "User updated successfully" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete("/api/users/:id", authToken, async (req, res) => {
+    if (req.user.role !== "Admin") {
+        return res.status(403).json({ message: "Forbidden: Admin access required" });
+    }
+
+    try {
+        const { id } = req.params;
+        
+        const currentUser = await Users.findOne({ where: { username: req.user.username } });
+        if (currentUser.id === parseInt(id)) {
+            return res.status(400).json({ message: "Cannot delete your own account" });
+        }
+
+        const user = await Users.findByPk(id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        await Users.destroy({ where: { id } });
+        
+        res.status(200).json({ message: "User deleted successfully" });
+    } catch (err) {
+        console.error('Delete user error:', err);
+        res.status(500).json({ message: "Error deleting user", error: err.message });
     }
 });
 
