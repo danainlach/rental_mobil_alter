@@ -129,5 +129,3 @@ Proyek ini dilisensikan di bawah **MIT License**. Lihat file [LICENSE](LICENSE) 
 
 Terima kasih telah menggunakan atau berkontribusi pada proyek kami! 🚗💨
 ```
-
-Dengan penambahan visual seperti preview gambar dan langkah-langkah yang lebih jelas, README ini menjadi lebih interaktif dan mudah dipahami. Anda bisa mengganti placeholder gambar dengan screenshot nyata dari aplikasi Anda untuk membuatnya lebih menarik.
