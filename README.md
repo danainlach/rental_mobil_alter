@@ -128,4 +128,3 @@ Proyek ini dilisensikan di bawah **MIT License**. Lihat file [LICENSE](LICENSE) 
 ---
 
 Terima kasih telah menggunakan atau berkontribusi pada proyek kami! 🚗💨
-```
