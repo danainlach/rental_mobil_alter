@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register Page</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
     <style>
         body {
             background: url('img/bg2.jpg') no-repeat center center fixed;
@@ -59,16 +56,12 @@
 
         .form-control {
             border-radius: 25px;
-            background: #f0f0f0;
+            background: #f6fbff;
             box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
             height: 45px;
             padding: 12px 20px;
             font-size: 16px;
             margin-bottom: 20px;
-        }
-
-        .form-control:focus {
-            box-shadow: 0 0 8px rgba(0, 0, 255, 0.5);
         }
 
         .btn-primary {
@@ -82,44 +75,20 @@
             letter-spacing: 1px;
         }
 
-        .btn-primary2 {
-            border: none;
-            padding: 14px 0px 0px 0px;
-            transition: background-color 0.3s ease;
-            font-weight: 580;
-            letter-spacing: 1px;
-            text-decoration: none;
-            font-size: 16px;
-            width: 80%;
-            margin-bottom: -16px;
-        }
-
-        .btn-primary3 {
-            border: none;
-            padding: 14px 30px 14px 0px;
-            transition: background-color 0.3s ease;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-decoration: none;
-            font-size: 16px;
-            border-radius: 10px;
-            height: fit-content;
-        }
-        .btn-primary3:hover {
-            border: none;
-            padding: 14px 30px 14px 0px;
-            transition: background-color 0.3s ease;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-decoration: none;
-            font-size: 16px;
-            border-radius: 10px;
-            height: fit-content;
-            color: #1660CB;
-        }
-
         .btn-primary:hover {
             background-color: #5752d1;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .login-link a {
+            color: #6c63ff;
+            text-decoration: none;
+            font-weight: 600;
         }
 
         #error {
@@ -128,7 +97,6 @@
             text-align: center;
             margin-top: 20px;
         }
-
         .footer {
             position: absolute;
             bottom: 30px;
@@ -148,49 +116,41 @@
             display: flex;
             margin-bottom: -30px;
         }
-
+        
     </style>
 </head>
-
 <body>
     <div class="overlay"></div>
     <div class="card">
         <h2>Register Page</h2>
-        <form id="registerform" action="/register" method="post">
+        <form id="registerForm" action="/register" method="POST">
             <div class="form-group">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
+                <input type="text" class="form-control" id="username" name="username" required>
             </div>
             <div class="form-group">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                <input type="password" class="form-control" id="password" name="password" required>
             </div>
-            <button type="submit" id="register" class="btn btn-primary">Register</button>
-            <div class="apa">
-            <p class="btn-primary2">Already Have Account?</p>
-            <a class="btn btn-primary3" href="/login">Login</a>
-        </div>
+            <div class="form-group">
+                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
         </form>
-        <div id="error" class="mt-3" style="display: none;">
-            Error: Please fill out all fields correctly.
+        <% if (typeof msg !== 'undefined' && msg) { %>
+        <div id="error" class="mt-3">
+            <%= msg %>
         </div>
-    </div>
+        <% } %>
+        <div class="login-link">
+            Already have an account? <a href="/login">Login here</a>
+        </div>
 
+        
+    </div>
     <div class="footer">
         <p>&copy; 2025 Rental Mobil | <a href="#">Privacy Policy</a></p>
     </div>
-
-    <script>
-        document.getElementById('registerform').addEventListener('submit', function (e) {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            if (!username || !password) {
-                e.preventDefault();
-                document.getElementById('error').style.display = 'block';
-            }
-        });
-    </script>
 </body>
-
 </html>

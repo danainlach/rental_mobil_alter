@@ -24,29 +24,36 @@ app.use(cookieParser());
 
 
 app.get('/register', (req, res) => {
-    res.render('register', { msg: "Some message", success: true }); // Ensure success is passed to the view
+    res.render('register', { msg: '' });
 });
 
-// Rute untuk menangani form register (POST)
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
     const { username, password } = req.body;
 
-    // Validasi input
-    if (!username || !password) {
-        return res.render('register', { 
-            msg: "All fields are required!", 
-            success: false 
+    try {
+        // Check if username already exists
+        const existingUser = await Users.findOne({ where: { username: username } });
+        if (existingUser) {
+            return res.render('register', { msg: 'Username already exists' });
+        }
+
+        // Create new user
+        await Users.create({
+            username: username,
+            password: password,
+            role: 'User' // Default role for new users
+        });
+
+        // Redirect to login with success message
+        res.render('login', { 
+            msg: 'Registration successful! Please login.'
+        });
+    } catch (err) {
+        console.error('Registration error:', err);
+        res.render('register', { 
+            msg: 'Error during registration. Please try again.'
         });
     }
-
-    // Simulasi penyimpanan ke database
-    console.log(`New user registered: ${username}`);
-
-    // Berikan notifikasi sukses
-    res.render('register', { 
-        msg: "Registration successful! Please login.", 
-        success: true 
-    });
 });
 
 app.get('/login', (req, res) => {
