@@ -107,6 +107,26 @@
             text-decoration: none;
             font-weight: 600;
         }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -126,9 +146,9 @@
             <button type="submit" id="login" class="btn btn-primary">Login</button>
         </form>
         <% if (msg) { %>
-        <div id="error" class="mt-3">
-            <%= msg %>
-        </div>
+            <div class="alert-<%= alertType || 'danger' %> mt-3">
+                <%= msg %>
+            </div>
         <% } %>
         <div class="mt-3 text-center" style="color: #333;">
             Don't have an account? 

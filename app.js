@@ -24,7 +24,10 @@ app.use(cookieParser());
 
 
 app.get('/register', (req, res) => {
-    res.render('register', { msg: '' });
+    res.render('register', { 
+        msg: '',
+        alertType: 'danger'
+    });
 });
 
 app.post('/register', async (req, res) => {
@@ -34,31 +37,37 @@ app.post('/register', async (req, res) => {
         // Check if username already exists
         const existingUser = await Users.findOne({ where: { username: username } });
         if (existingUser) {
-            return res.render('register', { msg: 'Username already exists' });
+            return res.render('register', { 
+                msg: 'Username already exists',
+                alertType: 'danger'
+            });
         }
 
         // Create new user
         await Users.create({
             username: username,
             password: password,
-            role: 'User' // Default role for new users
+            role: 'User' 
         });
 
-        // Redirect to login with success message
         res.render('login', { 
-            msg: 'Registration successful! Please login.'
+            msg: 'Registration successful! Please login.',
+            alertType: 'success'
         });
+        
     } catch (err) {
         console.error('Registration error:', err);
         res.render('register', { 
-            msg: 'Error during registration. Please try again.'
+            msg: 'Error during registration. Please try again.',
+            alertType: 'danger'
         });
     }
 });
 
 app.get('/login', (req, res) => {
     res.render("login", {
-        msg: ""
+        msg: "",
+        alertType: 'danger'
     });
 })
 
@@ -78,10 +87,16 @@ app.post('/login', (req, res) => {
             res.cookie("token", token, { httpOnly: true });  // Simpan token di cookie
             res.redirect("/");
         } else {
-            res.render("login", { msg: "Username dan password salah" });
+            res.render("login", { 
+                msg: "Username dan password salah",
+                alertType: 'danger'
+            });
         }
     }).catch(err => {
-        res.render("login", { msg: err });
+        res.render("login", { 
+            msg: err,
+            alertType: 'danger'
+        });
     });
 });
 
