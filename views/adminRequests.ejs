@@ -17,9 +17,9 @@
             <h1 class="text-primary text-center mb-4">Daftar Permintaan Sewa</h1>
             
             <!-- Debug info -->
-            <% if (requests && requests.length > 0) { %>
+           <!--  <% if (requests && requests.length > 0) { %>
                 <div class="mb-3">Total Requests: <%= requests.length %></div>
-            <% } %>
+            <% } %> -->
 
             <table class="table table-bordered table-striped">
                 <thead class="table-primary">
@@ -36,7 +36,7 @@
                     <% if (requests && requests.length > 0) { %>
                         <% requests.forEach((request, index) => { %>
                             <tr>
-                                <td><%= index + 1 %></td>
+                                <td><%= (pagination.current - 1) * pagination.limit + index + 1 %></td>
                                 <td><%= request.Item ? request.Item.nama : 'N/A' %></td>
                                 <td><%= request.User ? request.User.username : 'N/A' %></td>
                                 <td><%= request.status %></td>
@@ -58,6 +58,10 @@
                     <% } %>
                 </tbody>
             </table>
+
+            <% if (typeof pagination !== 'undefined') { %>
+                <%- include('partials/pagination', { pagination: pagination }) %>
+            <% } %>
         </div>
     </div>
 

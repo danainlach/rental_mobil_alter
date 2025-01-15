@@ -310,24 +310,38 @@ app.get("/admin/requests", authToken, async (req, res) => {
             return res.status(403).send("Forbidden");
         }
 
-        const requests = await Requests.findAll({
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
+
+        const { count, rows } = await Requests.findAndCountAll({
             include: [
                 { 
                     model: Items,
-                    as: 'Item'  // Add alias to match the view
+                    as: 'Item'
                 },
                 { 
                     model: Users,
-                    as: 'User'  // Add alias to match the view
+                    as: 'User'
                 }
-            ]
+            ],
+            limit: limit,
+            offset: offset,
+            order: [['createdAt', 'DESC']]
         });
 
-        console.log("Fetched requests:", JSON.stringify(requests, null, 2)); // Detailed logging
+        const totalPages = Math.ceil(count / limit);
+
         res.render("adminRequests", { 
-            requests: requests,
+            requests: rows,
             user: req.user,
-            activeMenu: 'requests'
+            activeMenu: 'requests',
+            pagination: {
+                current: page,
+                total: totalPages,
+                totalItems: count,
+                limit: limit
+            }
         });
     } catch (err) {
         console.error("Error fetching requests:", err);
