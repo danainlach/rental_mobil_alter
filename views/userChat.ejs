@@ -4,86 +4,70 @@
     <%- include('partials/header') %>
     <style>
         .chat-container {
-            height: 75vh;
+            height: 65vh;
             overflow-y: auto;
             padding: 20px;
             background: #f8f9fa;
-            border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border-radius: 15px;
             margin-bottom: 20px;
         }
 
         .message-wrapper {
             display: flex;
             flex-direction: column;
-            margin: 12px 0;
+            margin: 10px 0;
             width: 100%;
         }
 
-        .message-content {
-            display: flex;
-            flex-direction: column;
-            max-width: 70%;
-        }
-
+        /* Kelas untuk pesan dari pengirim */
         .sent {
-            align-items: flex-end;
-        }
-
-        .sent .message-content {
-            align-items: flex-end;
+            align-items: flex-end;  /* Posisi pesan di kanan */
+            text-align: right;
         }
 
         .sent .message-bubble {
-            border-bottom-right-radius: 5px;
-            margin-left: auto;
+            background: linear-gradient(135deg, #a5d6ff 0%, #3b8ce7 100%);
+            color: black;
+            border-radius: 15px;
+            padding: 10px 15px;
+            max-width: 70%; /* Lebar pesan tidak melebihi 70% */
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            margin-left: auto; /* Mengarahkan pesan ke kanan */
         }
 
+        /* Kelas untuk pesan dari penerima (admin) */
         .received {
-            align-self: flex-start;
+            align-items: flex-start; /* Posisi pesan di kiri */
+            text-align: left;
         }
 
         .received .message-bubble {
-            background: white;
-            color: #2D3748;
-            border-bottom-left-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background: linear-gradient(135deg, #b8e9ff 0%, #3096d1 100%);
+            color: black;
+            border-radius: 15px;
+            padding: 10px 15px;
+            max-width: 70%; /* Lebar pesan tidak melebihi 70% */
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
-        .message-metadata {
-            display: flex;
-            align-items: center;
+        .message-sender {
+            font-size: 0.8rem;
             margin-bottom: 4px;
-            font-size: 0.85rem;
-        }
-
-        .sent .message-metadata {
-            justify-content: flex-end;
-        }
-
-        .received .message-metadata {
-            justify-content: flex-start;
+            color: #666;
         }
 
         .message-time {
             font-size: 0.75rem;
-            margin-top: 4px;
+            color: black !important;
+            margin-top: 5px;
         }
 
-        .sent .message-time {
-            color: rgba(255,255,255,0.8);
-            text-align: right;
-        }
-
-        .received .message-time {
-            color: #718096;
-        }
-
+        /* Custom styles for chat input */
         .chat-input {
             background: white;
             padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
+            border-radius: 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
         }
 
         .chat-input form {
@@ -92,50 +76,53 @@
         }
 
         .chat-input input {
+            flex: 1;
             border: 1px solid #E2E8F0;
             border-radius: 15px;
             padding: 12px 20px;
             transition: all 0.3s ease;
         }
 
-        .chat-input input:focus {
-            border-color: #4299E1;
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
-        }
-
         .chat-input button {
             border-radius: 15px;
             padding: 0 25px;
-            background: #4299E1;
+            background: #4dabf7;
             border: none;
             color: white;
-            font-weight: 500;
             transition: all 0.3s ease;
         }
 
         .chat-input button:hover {
-            background: #2B6CB0;
+            background: #3b8ce7;
             transform: translateY(-1px);
         }
 
-        .badge {
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-weight: 500;
-            font-size: 0.75rem;
+        /* Styling for chat header */
+        .chat-header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        .badge.bg-primary {
-            background: #4299E1 !important;
+        .chat-header h4 {
+            margin: 0;
+            color: #2D3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .badge.bg-danger {
-            background: #F56565 !important;
+        .chat-header p {
+            margin: 5px 0 0;
+            color: #718096;
+            font-size: 0.9rem;
         }
 
         /* Custom scrollbar */
         .chat-container::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
 
         .chat-container::-webkit-scrollbar-track {
@@ -144,32 +131,8 @@
         }
 
         .chat-container::-webkit-scrollbar-thumb {
-            background: #cbd5e0;
+            background: #c1c9d2;
             border-radius: 10px;
-        }
-
-        .chat-container::-webkit-scrollbar-thumb:hover {
-            background: #a0aec0;
-        }
-
-        /* Chat header */
-        .chat-header {
-            padding: 15px 20px;
-            background: white;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .chat-header h4 {
-            margin: 0;
-            color: #2D3748;
-        }
-
-        .chat-header p {
-            margin: 5px 0 0;
-            color: #718096;
-            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -178,18 +141,27 @@
     
     <div class="container mt-4">
         <div class="chat-header">
-            <h4><i class="bi bi-headset"></i> Customer Support</h4>
+            <h4>
+                <i class="bi bi-headset"></i>
+                Customer Support
+            </h4>
             <p>Chat with our admin for assistance</p>
         </div>
 
         <div class="chat-container" id="chatContainer">
             <% messages.forEach(function(msg) { %>
                 <div class="message-wrapper <%= msg.senderId === user.id ? 'sent' : 'received' %>">
-                    <div class="message-metadata">
+                    <div class="message-sender">
                         <% if (msg.senderId === 1) { %>
-                            <span class="badge bg-danger"><i class="bi bi-person-gear"></i> Admin</span>
+                            <span class="badge bg-danger">
+                                <i class="bi bi-person-gear" style="margin-right: 5px;"></i>
+                                Admin
+                            </span>
                         <% } else { %>
-                            <span class="badge bg-primary"><i class="bi bi-person"></i> You</span>
+                            <span class="badge bg-primary">
+                                <i class="bi bi-person" style="margin-right: 5px;"></i>
+                                You
+                            </span>
                         <% } %>
                     </div>
                     <div class="message-bubble">
@@ -198,7 +170,9 @@
                             <%= new Date(msg.createdAt).toLocaleString('en-US', { 
                                 hour: 'numeric', 
                                 minute: 'numeric',
-                                hour12: true 
+                                hour12: true,
+                                month: 'short',
+                                day: 'numeric'
                             }) %>
                         </div>
                     </div>
