@@ -23,6 +23,31 @@ app.use(express.urlencoded({ extended: true }));  // Add 'extended' option
 app.use(cookieParser());
 
 
+app.get('/register', (req, res) => {
+    res.render('register', { msg: "Some message", success: true }); // Ensure success is passed to the view
+});
+
+// Rute untuk menangani form register (POST)
+app.post('/register', (req, res) => {
+    const { username, password } = req.body;
+
+    // Validasi input
+    if (!username || !password) {
+        return res.render('register', { 
+            msg: "All fields are required!", 
+            success: false 
+        });
+    }
+
+    // Simulasi penyimpanan ke database
+    console.log(`New user registered: ${username}`);
+
+    // Berikan notifikasi sukses
+    res.render('register', { 
+        msg: "Registration successful! Please login.", 
+        success: true 
+    });
+});
 
 app.get('/login', (req, res) => {
     res.render("login", {
