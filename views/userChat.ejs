@@ -8,103 +8,198 @@
             overflow-y: auto;
             padding: 20px;
             background: #f8f9fa;
-            border-radius: 15px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
         }
+
         .message-wrapper {
             display: flex;
             flex-direction: column;
             margin: 12px 0;
+            width: 100%;
         }
-        .message-sender {
-            font-size: 0.85rem;
-            margin-bottom: 4px;
-            color: #6c757d;
-        }
-        .message-bubble {
+
+        .message-content {
+            display: flex;
+            flex-direction: column;
             max-width: 70%;
-            padding: 12px 18px;
-            border-radius: 18px;
-            word-wrap: break-word;
-            position: relative;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
+
         .sent {
-            align-self: flex-end;
+            align-items: flex-end;
         }
+
+        .sent .message-content {
+            align-items: flex-end;
+        }
+
         .sent .message-bubble {
-            background: #4dabf7;
-            background: linear-gradient(135deg, #4dabf7 0%, #3b8ce7 100%);
-            color: white;
             border-bottom-right-radius: 5px;
+            margin-left: auto;
         }
+
         .received {
             align-self: flex-start;
         }
+
         .received .message-bubble {
             background: white;
+            color: #2D3748;
             border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
+
+        .message-metadata {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+            font-size: 0.85rem;
+        }
+
+        .sent .message-metadata {
+            justify-content: flex-end;
+        }
+
+        .received .message-metadata {
+            justify-content: flex-start;
+        }
+
         .message-time {
             font-size: 0.75rem;
-            margin-top: 6px;
+            margin-top: 4px;
         }
+
         .sent .message-time {
-            text-align: right;
             color: rgba(255,255,255,0.8);
+            text-align: right;
         }
+
         .received .message-time {
-            color: #99a0a7;
+            color: #718096;
         }
+
         .chat-input {
-            padding: 20px;
             background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
+        }
+
+        .chat-input form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            border: 1px solid #E2E8F0;
             border-radius: 15px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-            margin-top: 15px;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
         }
+
+        .chat-input input:focus {
+            border-color: #4299E1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+        }
+
+        .chat-input button {
+            border-radius: 15px;
+            padding: 0 25px;
+            background: #4299E1;
+            border: none;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input button:hover {
+            background: #2B6CB0;
+            transform: translateY(-1px);
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+
         .badge.bg-primary {
-            background: #4dabf7 !important;
-            font-weight: 500;
-            padding: 5px 10px;
+            background: #4299E1 !important;
         }
+
         .badge.bg-danger {
-            background: #ff6b6b !important;
-            font-weight: 500;
-            padding: 5px 10px;
+            background: #F56565 !important;
         }
+
         /* Custom scrollbar */
         .chat-container::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
+
         .chat-container::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 10px;
         }
+
         .chat-container::-webkit-scrollbar-thumb {
-            background: #c1c9d2;
+            background: #cbd5e0;
             border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+
+        /* Chat header */
+        .chat-header {
+            padding: 15px 20px;
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .chat-header h4 {
+            margin: 0;
+            color: #2D3748;
+        }
+
+        .chat-header p {
+            margin: 5px 0 0;
+            color: #718096;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
     <%- include('partials/navbar') %>
     
-    <div class="container mt-5">
-        <div class="chat-container">
+    <div class="container mt-4">
+        <div class="chat-header">
+            <h4><i class="bi bi-headset"></i> Customer Support</h4>
+            <p>Chat with our admin for assistance</p>
+        </div>
+
+        <div class="chat-container" id="chatContainer">
             <% messages.forEach(function(msg) { %>
                 <div class="message-wrapper <%= msg.senderId === user.id ? 'sent' : 'received' %>">
-                    <div class="message-sender" style="<%= msg.senderId === user.id ? 'text-align: right;' : 'text-align: left;' %>">
+                    <div class="message-metadata">
                         <% if (msg.senderId === 1) { %>
-                            <span class="badge bg-danger">Admin</span>
+                            <span class="badge bg-danger"><i class="bi bi-person-gear"></i> Admin</span>
                         <% } else { %>
-                            <span class="badge bg-primary"><%= user.username %></span>
+                            <span class="badge bg-primary"><i class="bi bi-person"></i> You</span>
                         <% } %>
                     </div>
                     <div class="message-bubble">
                         <%= msg.message %>
-                        <div class="message-time" style="color: <%= msg.senderId === user.id ? 'rgba(255,255,255,0.8)' : '#99a0a7' %>;">
-                            <%= new Date(msg.createdAt).toLocaleString() %>
+                        <div class="message-time">
+                            <%= new Date(msg.createdAt).toLocaleString('en-US', { 
+                                hour: 'numeric', 
+                                minute: 'numeric',
+                                hour12: true 
+                            }) %>
                         </div>
                     </div>
                 </div>
@@ -112,18 +207,30 @@
         </div>
         
         <div class="chat-input">
-            <form id="messageForm" class="d-flex">
-                <input type="text" id="messageText" class="form-control me-2" placeholder="Type your message...">
-                <button type="submit" class="btn btn-primary">Send</button>
+            <form id="messageForm">
+                <input type="text" id="messageText" class="form-control" 
+                       placeholder="Type your message here..." autocomplete="off">
+                <button type="submit" class="btn">
+                    <i class="bi bi-send"></i>
+                </button>
             </form>
         </div>
     </div>
 
     <script>
         const messageForm = document.getElementById('messageForm');
+        const chatContainer = document.getElementById('chatContainer');
+
+        // Auto scroll to bottom
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        scrollToBottom();
+
         messageForm.onsubmit = async (e) => {
             e.preventDefault();
-            const message = document.getElementById('messageText').value;
+            const messageText = document.getElementById('messageText');
+            const message = messageText.value;
             if (!message.trim()) return;
 
             try {
@@ -132,12 +239,12 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ message, receiverId: 1 }) // Admin ID is 1
+                    body: JSON.stringify({ message, receiverId: 1 })
                 });
                 
                 if (response.ok) {
-                    document.getElementById('messageText').value = '';
-                    location.reload(); // Refresh to see new message
+                    messageText.value = '';
+                    location.reload();
                 }
             } catch (error) {
                 console.error('Error:', error);
