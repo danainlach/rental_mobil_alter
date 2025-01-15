@@ -30,20 +30,36 @@
             border-radius: 10px;
             margin-bottom: 20px;
         }
+        .message-wrapper {
+            display: flex;
+            flex-direction: column;
+            margin: 10px 0;
+        }
+        .message-sender {
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+            color: #666;
+        }
         .message-bubble {
             max-width: 70%;
             padding: 10px 15px;
             border-radius: 15px;
-            margin: 5px 0;
             word-wrap: break-word;
+            position: relative;
         }
         .sent {
+            align-self: flex-end;
+        }
+        .sent .message-bubble {
             background: #007bff;
             color: white;
-            margin-left: auto;
             border-bottom-right-radius: 5px;
+            margin-left: auto;
         }
         .received {
+            align-self: flex-start;
+        }
+        .received .message-bubble {
             background: white;
             border-bottom-left-radius: 5px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
@@ -52,6 +68,9 @@
             font-size: 0.75rem;
             color: #666;
             margin-top: 5px;
+        }
+        .sent .message-time {
+            text-align: right;
         }
         .chat-input {
             padding: 20px;
@@ -90,10 +109,19 @@
                         <div class="card-body p-0">
                             <div class="chat-container" id="chatContainer">
                                 <% messages.forEach(function(msg) { %>
-                                    <div class="message-bubble <%= msg.senderId === user.id ? 'sent' : 'received' %>">
-                                        <%= msg.message %>
-                                        <div class="message-time">
-                                            <%= new Date(msg.createdAt).toLocaleString() %>
+                                    <div class="message-wrapper <%= msg.senderId === 1 ? 'sent' : 'received' %>">
+                                        <div class="message-sender" style="<%= msg.senderId === 1 ? 'text-align: right;' : 'text-align: left;' %>">
+                                            <% if (msg.senderId === 1) { %>
+                                                <span class="badge bg-danger">Admin</span>
+                                            <% } else { %>
+                                                <span class="badge bg-primary"><%= selectedUser.username %></span>
+                                            <% } %>
+                                        </div>
+                                        <div class="message-bubble">
+                                            <%= msg.message %>
+                                            <div class="message-time" style="color: <%= msg.senderId === 1 ? '#fff' : '#666' %>;">
+                                                <%= new Date(msg.createdAt).toLocaleString() %>
+                                            </div>
                                         </div>
                                     </div>
                                 <% }); %>
