@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 14, 2025 at 07:43 PM
+-- Generation Time: Jan 15, 2025 at 05:18 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -41,10 +41,16 @@ CREATE TABLE `mobils` (
 
 INSERT INTO `mobils` (`id`, `nama`, `stok`, `harga`, `keterangan`) VALUES
 (1, 'Toyota', 10, 100000, 'Tidak Ada'),
-(3, 'sodnuhdcwlc', 1111, 2147483647, NULL),
-(4, 'dnkd', 1, 1, NULL),
+(3, 'sodnuhdcwlc', 1111, 2147483647, 'okeee kali'),
+(4, 'dnkd', 1, 1, 'ni dh paling ok'),
 (5, 'Pajero', 11, 121, 'oke punya'),
-(6, 'ri', 22, 21, 'fff');
+(6, 'ri', 22, 21, 'fff'),
+(7, 'Expander', 10, 800000, 'ni mantap'),
+(8, 'Alphard', 10, 500000, 'harus'),
+(9, 'Mini Cooper', 9, 900000, 'sewala'),
+(10, 'Avanza', 80, 300000, 'bolela'),
+(11, 'Mazda CX5', 10, 9200, 'iiw'),
+(12, 'Baleno', 11, 21291, 'ok');
 
 -- --------------------------------------------------------
 
@@ -67,7 +73,14 @@ CREATE TABLE `requests` (
 
 INSERT INTO `requests` (`id`, `itemId`, `userId`, `status`, `createdAt`, `updatedAt`) VALUES
 (1, 1, 1, 'Pending', '2025-01-14 18:41:31', '2025-01-14 18:41:31'),
-(2, 1, 2, 'Pending', '2025-01-14 18:41:57', '2025-01-14 18:41:57');
+(2, 1, 2, 'Approved', '2025-01-14 18:41:57', '2025-01-14 18:46:54'),
+(3, 1, 1, 'Pending', '2025-01-14 18:46:44', '2025-01-14 18:46:44'),
+(4, 5, 2, 'Pending', '2025-01-14 18:52:08', '2025-01-14 18:52:08'),
+(5, 3, 2, 'Approved', '2025-01-14 19:05:13', '2025-01-14 19:05:37'),
+(6, 1, 2, 'Rejected', '2025-01-14 19:13:57', '2025-01-14 19:14:25'),
+(7, 11, 2, 'Approved', '2025-01-14 19:23:27', '2025-01-14 19:23:39'),
+(8, 10, 2, 'Approved', '2025-01-14 19:25:43', '2025-01-14 20:18:36'),
+(9, 12, 2, 'Approved', '2025-01-14 20:18:53', '2025-01-14 20:19:14');
 
 -- --------------------------------------------------------
 
@@ -122,13 +135,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `mobils`
 --
 ALTER TABLE `mobils`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `requests`
 --
 ALTER TABLE `requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `users`

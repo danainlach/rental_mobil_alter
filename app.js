@@ -1,10 +1,12 @@
 import express from "express";
+import { Sequelize, Op } from "sequelize"; // Add Op import
 import Items from "./models/items.js";
 import Users from "./models/users.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import Requests from "./models/requests.js";
+import Messages from "./models/messages.js";
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -392,6 +394,114 @@ app.get("/user/history", authToken, async (req, res) => {
     } catch (err) {
         console.error("Error fetching user history:", err);
         res.status(500).send("Failed to fetch history");
+    }
+});
+
+// User chat route
+app.get("/user/chat", authToken, async (req, res) => {
+    try {
+        const user = await Users.findOne({ where: { username: req.user.username } });
+        const messages = await Messages.findAll({
+            where: {
+                [Op.or]: [ // Use Op.or instead of Sequelize.Op.or
+                    { senderId: user.id, receiverId: 1 }, // Admin ID is 1
+                    { senderId: 1, receiverId: user.id }
+                ]
+            },
+            order: [['createdAt', 'ASC']]
+        });
+        
+        res.render("userChat", {
+            user: req.user,
+            messages: messages,
+            activeMenu: 'chat'
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading chat");
+    }
+});
+
+// Admin chat routes
+app.get("/admin/chat/:userId?", authToken, async (req, res) => {
+    if (req.user.role !== "Admin") {
+        return res.status(403).send("Forbidden");
+    }
+
+    try {
+        const users = await Users.findAll({
+            where: { role: "User" }
+        });
+
+        let selectedUser = null;
+        let messages = [];
+
+        if (req.params.userId) {
+            selectedUser = await Users.findByPk(req.params.userId);
+            messages = await Messages.findAll({
+                where: {
+                    [Op.or]: [ // Use Op.or instead of Sequelize.Op.or
+                        { senderId: 1, receiverId: req.params.userId },
+                        { senderId: req.params.userId, receiverId: 1 }
+                    ]
+                },
+                order: [['createdAt', 'ASC']]
+            });
+        }
+
+        res.render("adminChat", {
+            user: req.user,
+            users: users,
+            selectedUser: selectedUser,
+            messages: messages,
+            activeMenu: 'chat'
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading chat");
+    }
+});
+
+// Add this new route for fetching messages without page reload
+app.get("/admin/chat/:userId/messages", authToken, async (req, res) => {
+    if (req.user.role !== "Admin") {
+        return res.status(403).json({ error: "Forbidden" });
+    }
+
+    try {
+        const messages = await Messages.findAll({
+            where: {
+                [Op.or]: [
+                    { senderId: 1, receiverId: req.params.userId },
+                    { senderId: req.params.userId, receiverId: 1 }
+                ]
+            },
+            order: [['createdAt', 'ASC']]
+        });
+
+        res.json({ messages });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error fetching messages" });
+    }
+});
+
+// API endpoint for sending messages
+app.post("/api/messages", authToken, async (req, res) => {
+    try {
+        const { message, receiverId } = req.body;
+        const sender = await Users.findOne({ where: { username: req.user.username } });
+        
+        await Messages.create({
+            senderId: sender.id,
+            receiverId: receiverId,
+            message: message
+        });
+        
+        res.status(200).send("Message sent");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error sending message");
     }
 });
 
