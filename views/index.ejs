@@ -24,6 +24,80 @@
                 <a id="baru" href="/tambah" class="btn btn-primary">Tambah Data Baru</a>
                 <% } %>
             </div>
+
+            <div  class="our_room">
+                <div class="container">
+                   <div class="row">
+                      <div class="col-md-4 col-sm-6">
+                         <div id="serv_hover"  class="room">
+                            <div class="room_img">
+                               <figure><img src="/images/room1.jpg" alt="#"/></figure>
+                            </div>
+                            <div class="bed_room">
+                               <h3>Bed Room</h3>
+                               <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there </p>
+                            </div>
+                         </div>
+                      </div>
+                      <div class="col-md-4 col-sm-6">
+                         <div id="serv_hover"  class="room">
+                            <div class="room_img">
+                               <figure><img src="/images/room2.jpg" alt="#"/></figure>
+                            </div>
+                            <div class="bed_room">
+                               <h3>Bed Room</h3>
+                               <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there </p>
+                            </div>
+                         </div>
+                      </div>
+                      <div class="col-md-4 col-sm-6">
+                         <div id="serv_hover"  class="room">
+                            <div class="room_img">
+                               <figure><img src="/images/room3.jpg" alt="#"/></figure>
+                            </div>
+                            <div class="bed_room">
+                               <h3>Bed Room</h3>
+                               <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there </p>
+                            </div>
+                         </div>
+                      </div>
+                      <div class="col-md-4 col-sm-6">
+                         <div id="serv_hover"  class="room">
+                            <div class="room_img">
+                               <figure><img src="/images/room4.jpg" alt="#"/></figure>
+                            </div>
+                            <div class="bed_room">
+                               <h3>Bed Room</h3>
+                               <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there </p>
+                            </div>
+                         </div>
+                      </div>
+                      <div class="col-md-4 col-sm-6">
+                         <div id="serv_hover"  class="room">
+                            <div class="room_img">
+                               <figure><img src="/images/room5.jpg" alt="#"/></figure>
+                            </div>
+                            <div class="bed_room">
+                               <h3>Bed Room</h3>
+                               <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there </p>
+                            </div>
+                         </div>
+                      </div>
+                      <div class="col-md-4 col-sm-6">
+                         <div id="serv_hover"  class="room">
+                            <div class="room_img">
+                               <figure><img src="/images/room6.jpg" alt="#"/></figure>
+                            </div>
+                            <div class="bed_room">
+                               <h3>Bed Room</h3>
+                               <p>If you are going to use a passage of Lorem Ipsum, you need to be sure there </p>
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+             </div>
+
             <table class="table table-bordered table-striped">
                 <thead class="table-primary">
                     <tr>
@@ -125,6 +199,80 @@
         .toggled #sidebar {
             margin-left: -250px;
         }
+
+        .our_room .room {
+            text-align: center;
+            background-color: #fff;
+            margin-bottom: 30px;
+            transition: ease-in all 0.5s;
+        }
+
+        .our_room .room .room_img {
+            overflow: hidden;
+        }
+
+        #serv_hover {
+            position: relative;
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: white; /* Warna latar awal */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Bayangan awal */
+            border-radius: 8px; /* Sudut elemen sedikit melengkung */
+            overflow: hidden; /* Menghindari elemen di dalamnya keluar */
+            padding-top: 20px;
+        }
+        
+        #serv_hover:hover {
+            transform: translateY(-10px); /* Efek timbul (elevasi) */
+            background-color: black; /* Latar berubah menjadi hitam */
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3); /* Bayangan lebih besar */
+        }
+        
+        #serv_hover .bed_room {
+            color: black; /* Warna teks awal */
+            transition: color 0.3s ease;
+        }
+        
+        #serv_hover:hover .bed_room {
+            color: white; /* Ubah warna teks menjadi putih saat di-hover */
+        }
+        
+        #serv_hover .room_img img {
+            transition: opacity 0.3s ease;
+        }
+        
+        #serv_hover:hover .room_img img {
+            opacity: 0.7; /* Kurangi opacity gambar saat di-hover */
+        }
+
+        .our_room .room {
+            text-align: center;
+            background-color: #fff;
+            margin-bottom: 30px;
+            transition: ease-in all 0.5s;
+        }
+        .our_room .room .bed_room {
+            padding: 33px 30px;
+        }
+
+        .our_room .room .room_img figure {
+            margin: 0;
+        }
+        .our_room .room {
+            text-align: center;
+            background-color: #fff;
+            margin-bottom: 30px;
+            transition: ease-in all 0.5s;
+        }
+
+        figure {
+            display: block;
+            margin-block-start: 1em;
+            margin-block-end: 1em;
+            margin-inline-start: 40px;
+            margin-inline-end: 40px;
+            unicode-bidi: isolate;
+        }
+
     </style>
 </body>
 
