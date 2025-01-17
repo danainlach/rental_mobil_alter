@@ -145,7 +145,7 @@ const authToken = (req, res, next) => {
 app.get("/", authToken, async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = 10;
+        const limit = 6;
         const offset = (page - 1) * limit;
 
         const { count, rows } = await Items.findAndCountAll({
@@ -351,7 +351,7 @@ app.delete("/api/items/:id", authToken, (req, res) => {
 app.get("/sewa", authToken, async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = 9;
+        const limit = 10;
         const offset = (page - 1) * limit;
 
         const { count, rows } = await Items.findAndCountAll({
@@ -461,7 +461,7 @@ app.get("/admin/requests", authToken, async (req, res) => {
         }
 
         const page = parseInt(req.query.page) || 1;
-        const limit = 9;
+        const limit = 10;
         const offset = (page - 1) * limit;
 
         const { count, rows } = await Requests.findAndCountAll({
