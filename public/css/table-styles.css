@@ -1,0 +1,157 @@
+.custom-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 5px 0;
+    font-size: 1em;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    font-family: 'Poppins', sans-serif;
+}
+
+.custom-table thead {
+    background: #4dabf7;
+    color: white;
+}
+
+.custom-table thead th {
+    background: #4dabf7;
+    color: white;
+    font-weight: 600;
+    padding: 15px;
+    border-bottom: 2px solid #3b8ce7;
+}
+
+.custom-table th,
+.custom-table td {
+    padding: 12px 15px;
+    border: 1px solid #dee2e6; 
+}
+
+.custom-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.custom-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+}
+
+.custom-table .status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 500;
+    display: inline-block;
+    text-align: center;
+    min-width: 100px;
+}
+
+.custom-table .status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.custom-table .status-approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-approved {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.custom-table .status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.table-action-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9em;
+    margin: 0 3px;
+    text-decoration: none !important;
+    display: inline-block;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-view {
+    background: #4dabf7;
+    color: white;
+    text-decoration: none !important;
+}
+
+.btn-edit {
+    background: #ffd43b;
+    color: #000;
+}
+
+.btn-delete {
+    background: #fa5252;
+    color: white;
+}
+
+.table-action-btn:hover {
+    opacity: 0.8;
+    transform: translateY(-1px);
+}
+
+.action-status {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.role-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 500;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+}
+
+.role-admin {
+    background-color: #b9e0fc; 
+    color: #1971c2;
+    border: 1px solid #78b4e1;
+}
+
+.role-user {
+    background-color: #ffd29a; 
+    color: #495057;
+    border: 1px solid #ffa15f;
+}
