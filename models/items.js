@@ -11,7 +11,8 @@ const Mobil = conn.define('mobil', {
     keterangan: {
         type: DataTypes.STRING,
         allowNull: false // Pastikan field ini tidak boleh null
-    }
+    },
+    gambar: DataTypes.STRING
 }, {
     timestamps: false,
     createdAt: false,

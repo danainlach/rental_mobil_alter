@@ -27,8 +27,45 @@
                 </a>
                 <% } %>
             </div>
+                    <div class="row">
+                        <% barang.forEach((items, index) => { %>
+                            <div class="col-md-4 col-sm-6">
+                                <div id="serv_hover" class="room">
+                                    <div class="room_img">
+                                        <% if (items.gambar) { %>
+                                            <figure><img src="<%= items.gambar %>" alt="<%= items.nama %>" class="img-fluid" style="max-width: 100%;"></figure>
+                                        <% } else { %>
+                                            <figure><img src="path/to/default-image.jpg" alt="<%= items.nama %>" class="img-fluid" style="max-width: 100%;"></figure>
+                                        <% } %>
+                                    </div>
+                                    <div class="bed_room">
+                                        <h3><%= items.nama %></h3>
+                                        <p>Stok: <%= items.stok %></p>
+                                        <p>Harga: Rp <%= items.harga.toLocaleString('id-ID') %> per day</p>
+                                        <p><%= items.keterangan %></p>
+                                    </div>
+                                    <div class="actions">
+                                        <% if (user.role === "Admin") { %>
+                                            <a href='/edit/<%= items.id %>' class="table-action-btn btn-edit">
+                                                <i class="bi bi-pencil"></i> Edit
+                                            </a>
+                                            <button onclick="deleteItem('<%= items.id %>')" class="table-action-btn btn-delete">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        <% } else { %>
+                                            <a href="/sewa/<%= items.id %>" class="table-action-btn btn-view">
+                                                <i class="bi bi-cart"></i> Sewa
+                                            </a>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
 
-            <div class="card">
+             <!-- <div class="card">
                 <div class="card-body">
                     <table class="custom-table">
                         <thead>
@@ -38,6 +75,7 @@
                                 <th>Stok Mobil</th>
                                 <th>Harga Sewa Mobil</th>
                                 <th>Keterangan Mobil</th>
+                                <th>Gambar</th>  Tambahkan kolom gambar
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -50,6 +88,13 @@
                                     <td><%= items.stok %></td>
                                     <td>Rp <%= items.harga.toLocaleString('id-ID') %></td>
                                     <td><%= items.keterangan %></td>
+                                    <td>
+                                        <% if (items.gambar) { %>
+                                            <img src="<%= items.gambar %>" alt="<%= items.nama %>" class="img-thumbnail" style="max-width: 100px;">
+                                        <% } else { %>
+                                            <span>No Image</span>
+                                        <% } %>
+                                    </td>
                                     <td>
                                         <% if (user.role === "Admin") { %>
                                             <a href='/edit/<%= items.id %>' class="table-action-btn btn-edit">
@@ -67,16 +112,15 @@
                                 </tr>
                             <% }); %>
                         </tbody>
-                    </table>
-                </div>
-            </div>
-
+                    </table> -->
+                
+            
             <% if (typeof pagination !== 'undefined') { %>
                 <%- include('partials/pagination', { pagination: pagination }) %>
             <% } %>
         </div>
     </div>
-
+            
 
     <script>
         async function deleteItem(id) {
@@ -147,12 +191,18 @@
             border-radius: 8px; /* Sudut elemen sedikit melengkung */
             overflow: hidden; /* Menghindari elemen di dalamnya keluar */
             padding-top: 20px;
+            padding-right: 20px;
+            padding-left: 20px;
+            margin: 10px;
         }
         
         #serv_hover:hover {
             transform: translateY(-10px); /* Efek timbul (elevasi) */
-            background-color: black; /* Latar berubah menjadi hitam */
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3); /* Bayangan lebih besar */
+            background-color: #0f2649; /* Latar berubah menjadi hitam */
+            box-shadow: 0 15px 25px #0D6EFD; /* Bayangan lebih besar */
+            padding-right: 20px;
+            padding-left: 20px;
+            margin: 10px;
         }
         
         #serv_hover .bed_room {
@@ -166,6 +216,13 @@
         
         #serv_hover .room_img img {
             transition: opacity 0.3s ease;
+            width: 350px;
+            height: 250px;
+        }
+
+        .room_img{
+            width: 350px;
+            height: 250px;
         }
         
         #serv_hover:hover .room_img img {
@@ -184,6 +241,7 @@
 
         .our_room .room .room_img figure {
             margin: 0;
+
         }
         .our_room .room {
             text-align: center;
@@ -199,6 +257,45 @@
             margin-inline-start: 40px;
             margin-inline-end: 40px;
             unicode-bidi: isolate;
+            max-height: 200px;
+            
+        }
+
+        .our_room .room {
+            border: 1px solid #ddd;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .our_room .room:hover {
+            transform: translateY(-10px);
+        }
+        
+        .room_img figure {
+            margin: 0;
+            
+        }
+        
+        .bed_room h3 {
+            font-size: 1.2em;
+            margin: 15px 0;
+        }
+        
+        .actions {
+            margin-top: 15px;
+            margin-bottom: 10px;
+            margin-right: -15px;
+            text-align: right;
+        }
+        
+        .actions .table-action-btn {
+            margin-right: 10px;
+        }
+
+        .bi .bi-cart{
+            width: max-content;
+            height: 40px;
         }
 
     </style>

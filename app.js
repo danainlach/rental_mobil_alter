@@ -9,6 +9,16 @@ import Requests from "./models/requests.js";
 import Messages from "./models/messages.js";
 import Notification from "./models/notifications.js"; // Add Notification import
 import { sendNotification } from './websocket-server.js'; // Add this import
+import multer from "multer";
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+// Mendapatkan path direktori dari import.meta.url
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
+import fs from 'fs'; // Add this import to use the fs module
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -23,6 +33,8 @@ app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));  // Add 'extended' option
 app.use(cookieParser());
+// Menyajikan folder 'uploads' agar gambar dapat diakses
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 app.get('/register', (req, res) => {
@@ -142,14 +154,14 @@ app.get("/", authToken, async (req, res) => {
             order: [['id', 'ASC']]
         });
 
+        // Log untuk melihat path gambar
+        console.log(rows.map(item => item.gambar)); // Cek path gambar di server
+
         const totalPages = Math.ceil(count / limit);
 
         res.render("index", { 
             barang: rows,
-            user: {
-                ...req.user,
-                id: req.user.id // Make sure ID is included
-            },
+            user: req.user,
             activeMenu: 'home',
             pagination: {
                 current: page,
@@ -161,10 +173,7 @@ app.get("/", authToken, async (req, res) => {
         console.error(err);
         res.render("index", { 
             barang: [],
-            user: {
-                ...req.user,
-                id: req.user.id // Make sure ID is included
-            },
+            user: req.user,
             activeMenu: 'home',
             pagination: {
                 current: 1,
@@ -205,78 +214,144 @@ app.get("/edit/:id", authToken, (req, res) => {
 })
 
 
-app.post("/api/items", authToken, (req, res) => {
-    const { nama, stok, harga, keterangan } = req.body;
-    Items.create({
+// Konfigurasi Multer
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const dir = "./uploads"; // Ensure this points to a proper directory
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir); // Create folder if it doesn't exist
+        }
+        cb(null, dir); // Specify folder
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // Filename with timestamp
+    },
+});
+
+const upload = multer({ storage: storage });
+
+// Endpoint untuk menambah item dengan gambar
+app.post("/api/items", authToken, upload.single("gambar"), (req, res) => {
+    try {
+        const { nama, stok, harga, keterangan } = req.body;
+        const gambar = req.file ? `/uploads/${req.file.filename}` : null;
+
+        // Validasi input
+        if (!nama || !stok || !harga || !keterangan || !gambar) {
+            return res.status(400).json({
+                status: 400,
+                error: "Semua field harus diisi!",
+                response: null,
+            });
+        }
+
+        // Simpan data ke database
+        Items.create({
             nama,
             stok,
             harga,
-            keterangan
+            keterangan,
+            gambar,
         })
-        .then(result => {
-            res.send(JSON.stringify({ "status": 200, "error": null, "response": result }));
-        })
-        .catch(err => {
-            res.send(JSON.stringify({ "status": 500, "error": err, "response": console.log("gagal menambah data") }));
-        })
+            .then((result) => {
+                res.json({
+                    status: 200,
+                    error: null,
+                    response: result,
+                });
+            })
+            .catch((err) => {
+                console.error("Database error:", err);
+                res.status(500).json({
+                    status: 500,
+                    error: err.message,
+                    response: null,
+                });
+            });
+    } catch (err) {
+        console.error("Unexpected error:", err);
+        res.status(500).json({
+            status: 500,
+            error: err.message,
+            response: null,
+        });
+    }
 });
 
+// Melayani file statis dari folder uploads
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-app.put("/api/items/:id", (req, res) => {
+
+// Endpoint untuk mengedit data item
+app.put("/api/items/:id", upload.single("gambar"), async (req, res) => {
     const { nama, stok, harga, keterangan } = req.body;
     const id = req.params.id;
-    Items.update({
-            nama, stok, harga, keterangan
-        }, {
-            where: {
-                id: id
-            }
-        })
-        .then(result => {
-            res.send(JSON.stringify({
-                "status": 200,
-                "error": null,
-                "response": result
-            }));
-        })
-        .catch(err => {
-            res.send(JSON.stringify({
-                "status": 500,
-                "error": err,
-                "response": console.log("gagal mengedit data")
-            }));
-        })
+
+    try {
+        // Cari item yang akan diupdate berdasarkan ID
+        const item = await Items.findOne({ where: { id } });
+
+        if (!item) {
+            return res.status(404).json({ error: "Item tidak ditemukan" });
+        }
+
+        // Cek jika ada file gambar yang diupload
+        let gambar = item.gambar; // Default, gunakan gambar lama jika tidak ada file baru
+
+        // Jika ada file baru, simpan gambar dengan path yang benar
+        if (req.file) {
+            gambar = `/uploads/${req.file.filename}`; // Menambahkan '/uploads/' sebelum nama file
+        } else if (gambar && !gambar.startsWith('/uploads/')) {
+            // Jika gambar lama tidak diawali dengan '/uploads/', tambahkan prefix
+            gambar = `/uploads/${gambar}`;
+        }
+
+        // Siapkan data yang akan diupdate
+        const updatedData = {
+            nama,
+            stok: parseInt(stok, 10),
+            harga: parseInt(harga, 10),
+            keterangan,
+            gambar, // Menyimpan path gambar yang baru atau lama dengan prefix '/uploads/'
+        };
+
+        // Update item di database
+        await item.update(updatedData);
+
+        res.status(200).json({ message: "Item berhasil diperbarui" });
+    } catch (err) {
+        console.error("Terjadi kesalahan:", err);
+        res.status(500).json({ error: "Terjadi kesalahan pada server" });
+    }
 });
 
-
+// Endpoint untuk menghapus data item
 app.delete("/api/items/:id", authToken, (req, res) => {
     const id = req.params.id;
-    Items.destroy({
-            where: {
-                id: id
-            }
+
+    Items.destroy({ where: { id: id } })
+        .then((result) => {
+            res.json({
+                status: 200,
+                error: null,
+                response: result,
+            });
         })
-        .then(result => {
-            res.send(JSON.stringify({
-                "status": 200,
-                "error": null,
-                "response": result
-            }));
-        })
-        .catch(err => {
-            res.send(JSON.stringify({
-                "status": 500,
-                "error": err,
-                "response": console.log("gagal menghapus data")
-            }));
-        })
+        .catch((err) => {
+            console.error("Gagal menghapus data:", err);
+            res.status(500).json({
+                status: 500,
+                error: err.message,
+                response: null,
+            });
+        });
 });
 
 
 app.get("/sewa", authToken, async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = 10;
+        const limit = 6;
         const offset = (page - 1) * limit;
 
         const { count, rows } = await Items.findAndCountAll({
@@ -386,7 +461,7 @@ app.get("/admin/requests", authToken, async (req, res) => {
         }
 
         const page = parseInt(req.query.page) || 1;
-        const limit = 10;
+        const limit = 6;
         const offset = (page - 1) * limit;
 
         const { count, rows } = await Requests.findAndCountAll({

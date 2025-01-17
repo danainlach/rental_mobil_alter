@@ -1,19 +1,22 @@
 <html lang="en">
 
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Item</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .kosong {
+            height: 50px;
+        }
+    </style>
 </head>
-
 
 <body class="bg-light">
     <div class="container mt-5">
         <h1 id="judul" class="text-primary text-center mb-4">Tambah Item</h1>
-        <form class="border p-4 bg-white shadow rounded">
+        <form id="itemForm" class="border p-4 bg-white shadow rounded" method="POST" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="nama" class="form-label">Nama Mobil</label>
                 <input type="text" id="nama" class="form-control" required>
@@ -28,8 +31,13 @@
             </div>
             <div class="mb-3">
                 <label for="keterangan" class="form-label">Keterangan Mobil</label>
-                <input type="text" id="keterangan" class="form-control" min="0" required>
+                <input type="text" id="keterangan" class="form-control" required>
             </div>
+            <div class="mb-3">
+                <label for="gambar" class="form-label">Upload Gambar</label>
+                <input type="file" id="gambar" name="gambar" class="form-control">
+            </div>
+            <div class="kosong"></div>
             <div class="d-flex justify-content-between">
                 <button type="submit" id="addData" class="btn btn-primary">Tambah</button>
                 <button type="button" id="batal" class="btn btn-secondary" onclick="history.back()">Kembali</button>
@@ -37,54 +45,50 @@
         </form>
     </div>
 
-
     <!-- Bootstrap JS (Optional) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        async function addData() {
-            event.preventDefault();
-            let nama = document.getElementById("nama").value;
-            let stok = parseInt(document.getElementById("stok").value);
-            let harga = parseInt(document.getElementById("harga").value);
-            let keterangan = document.getElementById("keterangan").value;
-
-
-            let result = await fetch("/api/items", {
-                method: "POST",
-                headers: {
-                    "Content-type": "application/json"
-                },
-                body: JSON.stringify({
-                    nama,
-                    stok,
-                    harga,
-                    keterangan
-                })
-            });
-
-
-            if (!result.ok) {
-                return new Error("Failed to post data");
-            } else {
-                if (!nama || isNaN(stok) || isNaN(harga)) {
-                    alert("Pastikan kembali semua field sudah terisi");
+        async function addData(event) {
+            event.preventDefault(); // Prevent form refresh
+        
+            // Collect form data
+            let formData = new FormData();
+            formData.append("nama", document.getElementById("nama").value);
+            formData.append("stok", document.getElementById("stok").value);
+            formData.append("harga", document.getElementById("harga").value);
+            formData.append("keterangan", document.getElementById("keterangan").value);
+        
+            // Include image if available
+            let gambar = document.getElementById("gambar").files[0];
+            if (gambar) {
+                formData.append("gambar", gambar);
+            }
+        
+            try {
+                let response = await fetch("/api/items", {
+                    method: "POST",
+                    body: formData, // Send as FormData
+                });
+        
+                if (response.ok) {
+                    let result = await response.json();
+                    alert("Data berhasil ditambahkan!");
+                    window.location.href = "/"; // Redirect after success
                 } else {
-                    let response = await result.json();
-                    if (response.response != null) {
-                        alert("Data berhasil ditambahkan");
-                        window.location.href = "/";
-                    } else {
-                        alert("Gagal menambahkan Data");
-                    }
+                    let error = await response.json();
+                    console.error("Gagal menambahkan data:", error);
+                    alert("Gagal menambahkan data: " + error.error);
                 }
+            } catch (err) {
+                console.error("Terjadi kesalahan:", err);
+                alert("Terjadi kesalahan saat menambahkan data!");
             }
         }
 
-
-        let tambah = document.getElementById("addData");
-        tambah.addEventListener('click', addData);
+        // Tambahkan event listener pada form
+        let form = document.getElementById("itemForm");
+        form.addEventListener("submit", addData);
     </script>
 </body>
-
 
 </html>
