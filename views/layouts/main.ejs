@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <%- include('../partials/header') %>
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+    <div class="container main-content">
+        <%- body %>
+    </div>
+    
+    <% if (typeof user !== 'undefined' && user) { %>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pastikan user.id tersedia dari token
+            initializeNotifications('<%= user.id %>');
+        });
+    </script>
+    <% } %>
+</body>
+</html>

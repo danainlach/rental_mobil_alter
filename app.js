@@ -7,6 +7,8 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import Requests from "./models/requests.js";
 import Messages from "./models/messages.js";
+import Notification from "./models/notifications.js"; // Add Notification import
+import { sendNotification } from './websocket-server.js'; // Add this import
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -71,20 +73,22 @@ app.get('/login', (req, res) => {
     });
 })
 
-app.post('/login', (req, res) => {
+// Update login handler
+app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    Users.findOne({ where: { username: username, password: password } })
-    .then(result => {
-        if (result) {
-            const { role } = result;  // Ambil role dari hasil query
-            console.log("Role yang didapat dari database:", role); // Debugging
+    try {
+        const user = await Users.findOne({ where: { username, password } });
+        if (user) {
             const token = jwt.sign(
-                { username: username, role: role }, // Tambahkan role di payload
-                JWT_SECRET, 
+                { 
+                    username: username, 
+                    role: user.role,
+                    id: user.id  // Make sure to include user.id
+                },
+                JWT_SECRET,
                 { expiresIn: "1h" }
             );
-            console.log("Token yang dikirim:", token); // Debugging token
-            res.cookie("token", token, { httpOnly: true });  // Simpan token di cookie
+            res.cookie("token", token, { httpOnly: true });
             res.redirect("/");
         } else {
             res.render("login", { 
@@ -92,12 +96,12 @@ app.post('/login', (req, res) => {
                 alertType: 'danger'
             });
         }
-    }).catch(err => {
+    } catch (err) {
         res.render("login", { 
-            msg: err,
+            msg: err.message,
             alertType: 'danger'
         });
-    });
+    }
 });
 
 app.get('/logout', (req, res) => {
@@ -124,6 +128,8 @@ const authToken = (req, res, next) => {
 
 
 
+// Update all render calls to include user ID
+// Example for index route:
 app.get("/", authToken, async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -140,7 +146,10 @@ app.get("/", authToken, async (req, res) => {
 
         res.render("index", { 
             barang: rows,
-            user: req.user,
+            user: {
+                ...req.user,
+                id: req.user.id // Make sure ID is included
+            },
             activeMenu: 'home',
             pagination: {
                 current: page,
@@ -152,7 +161,10 @@ app.get("/", authToken, async (req, res) => {
         console.error(err);
         res.render("index", { 
             barang: [],
-            user: req.user,
+            user: {
+                ...req.user,
+                id: req.user.id // Make sure ID is included
+            },
             activeMenu: 'home',
             pagination: {
                 current: 1,
@@ -277,7 +289,10 @@ app.get("/sewa", authToken, async (req, res) => {
 
         res.render("sewa", { 
             barang: rows,
-            user: req.user,
+            user: {
+                ...req.user,
+                id: req.user.id // Make sure ID is included
+            },
             activeMenu: 'sewa',
             pagination: {
                 current: page,
@@ -289,7 +304,10 @@ app.get("/sewa", authToken, async (req, res) => {
         console.error(err);
         res.render("sewa", { 
             barang: [],
-            user: req.user,
+            user: {
+                ...req.user,
+                id: req.user.id // Make sure ID is included
+            },
             activeMenu: 'sewa',
             pagination: {
                 current: 1,
@@ -311,7 +329,10 @@ app.get("/sewa/:id", authToken, (req, res) => {
         if (result) {
             res.render("sewaDetail", {
                 barang: result, // Data barang berdasarkan ID
-                user: req.user,  // Data pengguna yang sedang login
+                user: {
+                    ...req.user,
+                    id: req.user.id // Make sure ID is included
+                },  // Data pengguna yang sedang login
                 activeMenu: 'sewa'  
             });
         } else {
@@ -336,13 +357,20 @@ app.post("/api/request", authToken, async (req, res) => {
             return res.status(400).send("User not found");
         }
 
+        const item = await Items.findByPk(itemId);
         const request = await Requests.create({
             itemId: itemId,
             userId: user.id,
             status: "Pending"
         });
         
-        console.log("Request created:", request);
+        await createAndSendNotification(
+            1, // admin ID
+            'rental',
+            `New rental request from ${user.username} for ${item.nama}`,
+            request.id
+        );
+        
         res.status(200).send("Request created successfully");
     } catch (err) {
         console.error("Error creating request:", err);
@@ -381,7 +409,10 @@ app.get("/admin/requests", authToken, async (req, res) => {
 
         res.render("adminRequests", { 
             requests: rows,
-            user: req.user,
+            user: {
+                ...req.user,
+                id: req.user.id // Make sure ID is included
+            },
             activeMenu: 'requests',
             pagination: {
                 current: page,
@@ -457,7 +488,10 @@ app.get("/user/history", authToken, async (req, res) => {
 
         res.render("userHistory", { 
             requests: rows,
-            user: req.user,
+            user: {
+                ...req.user,
+                id: req.user.id // Make sure ID is included
+            },
             activeMenu: 'history',
             pagination: {
                 current: page,
@@ -486,7 +520,10 @@ app.get("/user/chat", authToken, async (req, res) => {
         });
         
         res.render("userChat", {
-            user: req.user,
+            user: {
+                ...req.user,
+                id: req.user.id // Make sure ID is included
+            },
             messages: messages,
             activeMenu: 'chat'
         });
@@ -523,7 +560,10 @@ app.get("/admin/chat/:userId?", authToken, async (req, res) => {
         }
 
         res.render("adminChat", {
-            user: req.user,
+            user: {
+                ...req.user,
+                id: req.user.id // Make sure ID is included
+            },
             users: users,
             selectedUser: selectedUser,
             messages: messages,
@@ -563,11 +603,19 @@ app.post("/api/messages", authToken, async (req, res) => {
         const { message, receiverId } = req.body;
         const sender = await Users.findOne({ where: { username: req.user.username } });
         
-        await Messages.create({
+        const newMessage = await Messages.create({
             senderId: sender.id,
-            receiverId: receiverId,
+            receiverId: parseInt(receiverId),
             message: message
         });
+        
+        // Create notification for receiver
+        await createAndSendNotification(
+            parseInt(receiverId),
+            'chat',
+            `New message from ${sender.username}: ${message.substring(0, 30)}...`,
+            newMessage.id
+        );
         
         res.status(200).send("Message sent");
     } catch (err) {
@@ -597,7 +645,10 @@ app.get("/admin/users", authToken, async (req, res) => {
 
         res.render("adminUsers", {
             users: rows,
-            user: req.user,
+            user: {
+                ...req.user,
+                id: req.user.id // Make sure ID is included
+            },
             activeMenu: 'users',
             pagination: {
                 current: page,
@@ -675,6 +726,115 @@ app.delete("/api/users/:id", authToken, async (req, res) => {
         res.status(500).json({ message: "Error deleting user", error: err.message });
     }
 });
+
+// Get user notifications
+app.get("/api/notifications", authToken, async (req, res) => {
+    try {
+        const user = await Users.findOne({ where: { username: req.user.username } });
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        const notifications = await Notification.findAll({
+            where: { userId: user.id },
+            order: [['createdAt', 'DESC']]
+        });
+        res.json(notifications);
+    } catch (err) {
+        res.status(500).json({ error: "Error fetching notifications" });
+    }
+});
+
+// Mark notification as read
+app.post("/api/notifications/:id/read", authToken, async (req, res) => {
+    try {
+        await Notification.update(
+            { isRead: true },
+            { where: { id: req.params.id, userId: req.user.id } }
+        );
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: "Error updating notification" });
+    }
+});
+
+// Get unread notification count
+app.get("/api/notifications/unread-count", authToken, async (req, res) => {
+    try {
+        const user = await Users.findOne({ where: { username: req.user.username } });
+        const count = await Notification.count({
+            where: { 
+                userId: user.id,
+                isRead: false 
+            }
+        });
+        res.json({ count });
+    } catch (err) {
+        res.status(500).json({ error: "Error fetching notification count" });
+    }
+});
+
+// Clear all notifications for user
+app.delete("/api/notifications/clear-all", authToken, async (req, res) => {
+    try {
+        const user = await Users.findOne({ where: { username: req.user.username } });
+        await Notification.destroy({
+            where: { 
+                userId: user.id,
+                isRead: true // Only delete read notifications
+            }
+        });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: "Error clearing notifications" });
+    }
+});
+
+// Clear old notifications (older than 30 days)
+app.delete("/api/notifications/cleanup", authToken, async (req, res) => {
+    try {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        await Notification.destroy({
+            where: {
+                createdAt: {
+                    [Op.lt]: thirtyDaysAgo
+                }
+            }
+        });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: "Error cleaning up notifications" });
+    }
+});
+
+// Fungsi helper untuk membuat dan mengirim notifikasi
+async function createAndSendNotification(userId, type, message, targetId) {
+    try {
+        const notification = await Notification.create({
+            userId,
+            type,
+            message,
+            targetId,
+            isRead: false,
+            createdAt: new Date()
+        });
+        
+        // Send real-time notification via WebSocket
+        sendNotification(userId, {
+            id: notification.id,
+            type,
+            message,
+            targetId,
+            createdAt: notification.createdAt
+        });
+        
+        return notification;
+    } catch (error) {
+        console.error('Error creating notification:', error);
+        throw error;
+    }
+}
 
 app.listen(port, hostnama, () => {
     console.log(`Server running at ${hostnama}:${port}`);

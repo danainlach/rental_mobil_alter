@@ -53,4 +53,59 @@
         background: white;
         border-top: 1px solid #dee2e6;
     }
+
+    /* Notification Styles */
+    .notification-dropdown .dropdown-menu {
+        width: 300px;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .notification-item {
+        border-bottom: 1px solid #eee;
+    }
+
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+
+    .notification-item .dropdown-item {
+        padding: 0.75rem 1rem;
+        white-space: normal;
+    }
+
+    .notification-item .dropdown-item:active {
+        background-color: #e9ecef;
+        color: #1e2125;
+    }
+
+    .notification-item .dropdown-item.unread {
+        background-color: #f8f9fa;
+    }
+
+    .notification-badge {
+        font-size: 0.7rem;
+        padding: 0.25em 0.6em;
+    }
+
+    /* Toast Notification Styles */
+    .toast-container {
+        z-index: 1050;
+    }
+
+    .toast {
+        width: 350px;
+    }
 </style>
+
+<!-- Add this before closing head tag, after other scripts -->
+<script src="/js/notifications.js"></script>
+
+<!-- Initialize notifications if user is logged in -->
+<% if (typeof user !== 'undefined' && user) { %>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeNotifications('<%= user.username %>');
+    });
+</script>
+<% } %>

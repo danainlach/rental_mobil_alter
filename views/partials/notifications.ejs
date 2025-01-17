@@ -1,0 +1,24 @@
+<div class="notification-dropdown">
+    <div class="dropdown">
+        <button class="btn btn-link position-relative" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-bell"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationBadge" style="display: none;">
+                0
+            </span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown" id="notificationList" style="width: 300px; max-height: 400px; overflow-y: auto;">
+            <li>
+                <div class="dropdown-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Notifications</h6>
+                    <button class="btn btn-sm btn-outline-danger" onclick="clearAllNotifications()">
+                        Clear All
+                    </button>
+                </div>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <!-- Notifications will be inserted here dynamically -->
+        </ul>
+    </div>
+</div>
+
+<div id="notificationToasts" class="toast-container position-fixed top-0 end-0 p-3"></div>

@@ -191,38 +191,90 @@
     <script>
         const messageForm = document.getElementById('messageForm');
         const chatContainer = document.getElementById('chatContainer');
-        const refreshButton = document.getElementById('refreshChat');
-
-        // Scroll to bottom of chat
-        if (chatContainer) {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+        
+        let ws;
+        const selectedUserId = <%= selectedUser ? selectedUser.id : 'null' %>;
+        
+        // Add this function to scroll to bottom
+        function scrollToLatestMessage() {
+            if (chatContainer) {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
         }
+        
+        // Call scroll function after page loads
+        document.addEventListener('DOMContentLoaded', scrollToLatestMessage);
+        
+        function connectWebSocket() {
+            ws = new WebSocket('ws://localhost:3001');
+            
+            ws.onopen = () => {
+                console.log('WebSocket Connected');
+                ws.send(JSON.stringify({
+                    type: 'register',
+                    userId: 1 // Admin ID
+                }));
+            };
+            
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                console.log('Received message:', data);
+                
+                if (data.type === 'chat' && selectedUserId === data.senderId) {
+                    appendMessage({
+                        senderId: data.senderId,
+                        message: data.message,
+                        createdAt: data.timestamp
+                    }, false);
+                }
+            };
 
-        // Manual refresh when button is clicked
-        if (refreshButton) {
-            refreshButton.onclick = () => {
-                location.reload();
+            ws.onerror = (error) => {
+                console.error('WebSocket Error:', error);
+            };
+
+            ws.onclose = () => {
+                console.log('WebSocket Disconnected');
+                setTimeout(connectWebSocket, 5000);
             };
         }
 
-        if (messageForm) {
-            const messageInput = document.getElementById('messageText');
-            
-            // Add input event listener to detect typing
-            messageInput.addEventListener('input', () => {
-                isTyping = true;
-                // Reset typing flag after user stops typing for 1 second
-                clearTimeout(messageInput.timeout);
-                messageInput.timeout = setTimeout(() => {
-                    isTyping = false;
-                }, 1000);
-            });
+        if (selectedUserId) {
+            connectWebSocket();
+        }
 
+        function appendMessage(msg, isSent) {
+            if (!chatContainer) return;
+            
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = `message-wrapper ${isSent ? 'sent' : 'received'}`;
+            
+            messageWrapper.innerHTML = `
+                <div class="message-sender" style="${isSent ? 'text-align: right;' : 'text-align: left;'}">
+                    ${isSent ? 
+                        '<span class="badge bg-danger"><i class="bi bi-person-gear" style="margin-right: 5px;"></i>Admin</span>' :
+                        '<span class="badge bg-primary"><i class="bi bi-person" style="margin-right: 7px;"></i>' + 
+                        '<%= selectedUser ? selectedUser.username : "" %></span>'
+                    }
+                </div>
+                <div class="message-bubble">
+                    ${msg.message}
+                    <div class="message-time">
+                        ${new Date(msg.createdAt).toLocaleString()}
+                    </div>
+                </div>
+            `;
+            
+            chatContainer.appendChild(messageWrapper);
+            scrollToLatestMessage(); // Scroll after adding new message
+        }
+
+        if (messageForm) {
             messageForm.onsubmit = async (e) => {
                 e.preventDefault();
                 const messageText = document.getElementById('messageText');
                 const message = messageText.value;
-                if (!message.trim()) return;
+                if (!message.trim() || !selectedUserId) return;
 
                 try {
                     const response = await fetch('/api/messages', {
@@ -232,13 +284,29 @@
                         },
                         body: JSON.stringify({ 
                             message, 
-                            receiverId: <%= selectedUser ? selectedUser.id : null %> 
+                            receiverId: selectedUserId
                         })
                     });
                     
                     if (response.ok) {
                         messageText.value = '';
-                        location.reload();
+                        
+                        // Send through WebSocket if connected
+                        if (ws && ws.readyState === WebSocket.OPEN) {
+                            ws.send(JSON.stringify({
+                                type: 'chat',
+                                senderId: 1,
+                                receiverId: selectedUserId,
+                                message: message
+                            }));
+                        }
+                        
+                        // Append message locally
+                        appendMessage({
+                            senderId: 1,
+                            message: message,
+                            createdAt: new Date()
+                        }, true);
                     }
                 } catch (error) {
                     console.error('Error:', error);

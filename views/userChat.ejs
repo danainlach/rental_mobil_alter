@@ -17,6 +17,7 @@
             flex-direction: column;
             margin: 10px 0;
             width: 100%;
+            background-color: #f8f9fa !important;
         }
 
         /* Kelas untuk pesan dari pengirim */
@@ -54,6 +55,7 @@
             font-size: 0.8rem;
             margin-bottom: 4px;
             color: #666;
+            background-color: #f8f9fa !important;
         }
 
         .message-time {
@@ -67,7 +69,7 @@
             background: white;
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 -2px 10px rgb(255, 255, 255);
         }
 
         .chat-input form {
@@ -194,6 +196,68 @@
     <script>
         const messageForm = document.getElementById('messageForm');
         const chatContainer = document.getElementById('chatContainer');
+        
+        let ws;
+    
+        function connectWebSocket() {
+            ws = new WebSocket('ws://localhost:3001');
+            
+            ws.onopen = () => {
+                console.log('WebSocket Connected');
+                ws.send(JSON.stringify({
+                    type: 'register',
+                    userId: <%= user.id %>
+                }));
+            };
+            
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                console.log('Received message:', data);
+                
+                if (data.type === 'chat') {
+                    appendMessage({
+                        senderId: data.senderId,
+                        message: data.message,
+                        createdAt: data.timestamp
+                    }, false);
+                }
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket Error:', error);
+            };
+
+            ws.onclose = () => {
+                console.log('WebSocket Disconnected');
+                // Reconnect after 5 seconds
+                setTimeout(connectWebSocket, 5000);
+            };
+        }
+
+        connectWebSocket();
+
+        function appendMessage(msg, isSent) {
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = `message-wrapper ${isSent ? 'sent' : 'received'}`;
+            
+            messageWrapper.innerHTML = `
+                <div class="message-sender">
+                    ${msg.senderId === 1 ? 
+                        '<span class="badge bg-danger"><i class="bi bi-person-gear" style="margin-right: 5px;"></i>Admin</span>' :
+                        '<span class="badge bg-primary"><i class="bi bi-person" style="margin-right: 5px;"></i>You</span>'
+                    }
+                </div>
+                <div class="message-bubble">
+                    ${msg.message}
+                    <div class="message-time">
+                        ${new Date(msg.createdAt).toLocaleString()}
+                    </div>
+                </div>
+            `;
+            
+            chatContainer.appendChild(messageWrapper);
+            scrollToBottom();
+        }
 
         // Auto scroll to bottom
         function scrollToBottom() {
@@ -213,12 +277,31 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ message, receiverId: 1 })
+                    body: JSON.stringify({ 
+                        message, 
+                        receiverId: 1 
+                    })
                 });
                 
                 if (response.ok) {
                     messageText.value = '';
-                    location.reload();
+                    
+                    // Send through WebSocket if connected
+                    if (ws && ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({
+                            type: 'chat',
+                            senderId: <%= user.id %>,
+                            receiverId: 1,
+                            message: message
+                        }));
+                    }
+                    
+                    // Append message locally
+                    appendMessage({
+                        senderId: <%= user.id %>,
+                        message: message,
+                        createdAt: new Date()
+                    }, true);
                 }
             } catch (error) {
                 console.error('Error:', error);
