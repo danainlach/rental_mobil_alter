@@ -155,3 +155,475 @@
     color: #495057;
     border: 1px solid #ffa15f;
 }
+
+.main-content {
+    padding: 60px 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+#judul {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #198754;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    margin-left: 20px;
+}
+
+.room {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.room:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 20px 40px rgba(13,110,253,0.15);
+}
+
+.room_img {
+    position: relative;
+    height: 280px;
+    overflow: hidden;
+}
+
+.room_img figure {
+    margin: 0;
+    height: 100%;
+}
+
+.room_img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.room:hover .room_img img {
+    transform: scale(1.08);
+}
+
+.bed_room {
+    padding: 25px;
+    background: white;
+    position: relative;
+}
+
+.bed_room h3 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 15px;
+    transition: color 0.3s ease;
+}
+
+.room:hover .bed_room h3 {
+    color: #0D6EFD;
+}
+
+.bed_room p {
+    color: #6c757d;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.price-tag {
+    font-size: 1.25rem;
+    color: #0D6EFD;
+    font-weight: 600;
+    margin: 15px 0;
+}
+
+.actions {
+    padding: 0 25px 25px;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.table-action-btn {
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+}
+
+.btn-edit {
+    background: #ffeeba;
+    color: #d39e00;
+}
+
+.btn-delete {
+    background: #f8d7da;
+    color: #dc3545;
+}
+
+.btn-view {
+    background: #cce5ff;
+    color: #0D6EFD;
+}
+
+.table-action-btn:hover {
+    transform: translateY(-3px);
+    filter: brightness(95%);
+}
+
+.stock-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(13,110,253,0.1);
+    color: #0D6EFD;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+#baru {
+    background: #198754;
+    color: white;
+    margin-right: 10px !important;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#baru:hover {
+    background: #146c43;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(25, 135, 84, 0.2);
+}
+
+@media (max-width: 768px) {
+    .room_img {
+        height: 220px;
+    }
+    
+    .bed_room {
+        padding: 20px;
+    }
+    
+    .bed_room h3 {
+        font-size: 1.3rem;
+    }
+}
+
+#wrapper {
+    display: flex;
+    height: 100vh;
+}
+
+#sidebar {
+    width: 250px;
+    min-height: 100vh;
+}
+
+#page-content-wrapper {
+    flex-grow: 1;
+}
+
+.toggled #sidebar {
+    margin-left: -250px;
+}
+
+.our_room .room {
+    text-align: center;
+    background-color: #fff;
+    margin-bottom: 30px;
+    transition: ease-in all 0.5s;
+}
+
+.our_room .room .room_img {
+    overflow: hidden;
+}
+
+#serv_hover {
+    position: relative;
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: white; /* Warna latar awal */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Bayangan awal */
+    border-radius: 8px; /* Sudut elemen sedikit melengkung */
+    overflow: hidden; /* Menghindari elemen di dalamnya keluar */
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+    margin: 10px;
+}
+
+#serv_hover:hover {
+    transform: translateY(-10px); /* Efek timbul (elevasi) */
+    background-color: #0f2649; /* Latar berubah menjadi hitam */
+    box-shadow: 0 15px 25px #0D6EFD; /* Bayangan lebih besar */
+    padding-right: 20px;
+    padding-left: 20px;
+    margin: 10px;
+}
+
+#serv_hover .bed_room {
+    color: black; /* Warna teks awal */
+    transition: color 0.3s ease;
+}
+
+#serv_hover:hover .bed_room {
+    color: white; /* Ubah warna teks menjadi putih saat di-hover */
+}
+
+#serv_hover .room_img img {
+    transition: opacity 0.3s ease;
+    width: 350px;
+    height: 250px;
+}
+
+.room_img{
+    width: 354px;
+    height: 250px;
+}
+
+#serv_hover:hover .room_img img {
+    opacity: 0.7; /* Kurangi opacity gambar saat di-hover */
+}
+
+.our_room .room {
+    text-align: center;
+    background-color: #fff;
+    margin-bottom: 30px;
+    transition: ease-in all 0.5s;
+}
+.our_room .room .bed_room {
+    padding: 33px 30px;
+}
+
+.our_room .room .room_img figure {
+    margin: 0;
+
+}
+.our_room .room {
+    text-align: center;
+    background-color: #fff;
+    margin-bottom: 30px;
+    transition: ease-in all 0.5s;
+}
+
+figure {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 40px;
+    margin-inline-end: 40px;
+    unicode-bidi: isolate;
+    max-height: 200px;
+    
+}
+
+.our_room .room {
+    border: 1px solid #ddd;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.our_room .room:hover {
+    transform: translateY(-10px);
+}
+
+.room_img figure {
+    margin: 0;
+    
+}
+
+.bed_room h3 {
+    font-size: 1.2em;
+    margin: 15px 0;
+}
+
+.actions {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    margin-right: -15px;
+    text-align: right;
+}
+
+.actions .table-action-btn {
+    margin-right: 10px;
+}
+
+.bi .bi-cart{
+    width: max-content;
+    height: 40px;
+}
+
+.main-content {
+    padding-top: 100px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.page-title {
+    position: relative;
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 1rem;
+}
+
+.page-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: #0D6EFD;
+    border-radius: 2px;
+}
+
+.card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    overflow: hidden;
+    background: white;
+    margin-bottom: 2rem;
+
+}
+
+.image-section {
+    position: relative;
+    padding: 4rem;
+    background: linear-gradient(to bottom, #ffffff, #ffffff);
+    border-radius: 20px;
+}
+
+.image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    aspect-ratio: 16/9;
+}
+
+.img-fluid {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.image-container:hover .img-fluid {
+    transform: scale(1.05);
+}
+
+.details-section {
+    padding: 2.5rem;
+    background: white;
+}
+
+.car-title {
+    color: #2c3e50;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-item {
+    background: rgba(13,110,253,0.03);
+    padding: 1.5rem;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.info-item:hover {
+    background: rgba(13,110,253,0.08);
+    transform: translateY(-5px);
+}
+
+.info-label {
+    color: #0D6EFD;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+.info-value {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.description-box {
+    background: rgba(13,110,253,0.03);
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+}
+
+.description-box h4 {
+    color: #0D6EFD;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.btn-request {
+    background: #0D6EFD;
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    border: none;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(13,110,253,0.3);
+}
+
+.btn-request:hover {
+    transform: translateY(-3px);
+    background: #0b5ed7;
+    box-shadow: 0 8px 20px rgba(13,110,253,0.4);
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding-top: 80px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .image-section,
+    .details-section {
+        padding: 1.5rem;
+    }
+
+    .car-title {
+        font-size: 1.8rem;
+    }
+}
+

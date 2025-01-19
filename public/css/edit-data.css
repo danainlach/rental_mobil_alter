@@ -1,0 +1,95 @@
+body {
+    background: linear-gradient(45deg, #2193b0, #6dd5ed);
+    margin-bottom: 60px;
+}
+.container {
+    padding-top: 0rem;
+    animation: fadeIn 0.5s ease-in;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.form-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    padding: 2.5rem;
+    transition: all 0.3s ease;
+    webkit-backdrop-filter: blur(10px);
+}
+.form-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+.form-section {
+    background: rgba(248, 249, 250, 0.9);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+.form-section:hover {
+    background: rgba(248, 249, 250, 1);
+    transform: scale(1.01);
+}
+.form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 0.8rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.9);
+}
+.form-control:focus {
+    border-color: #2193b0;
+    box-shadow: 0 0 0 0.2rem rgba(33, 147, 176, 0.2);
+    transform: translateY(-2px);
+}
+.btn {
+    padding: 0.8rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.btn-primary {
+    background: linear-gradient(45deg, #2193b0, #6dd5ed);
+    border: none;
+}
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(33, 147, 176, 0.4);
+}
+.current-image {
+    padding: 1.5rem;
+    width: 50%;
+    background: rgba(248, 249, 250, 0.9);
+    border-radius: 15px;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+}
+.current-image:hover {
+    transform: scale(1.02);
+}
+.current-image img {
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    max-width: 100%;
+    height: auto;
+}
+.current-image img:hover {
+    transform: scale(1.05);
+}
+#judul {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(46, 112, 177, 0.2);
+    font-weight: 700;
+    margin-bottom: 2.7rem !important;
+}
+.form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.8rem;
+}

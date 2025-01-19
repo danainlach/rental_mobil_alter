@@ -7,50 +7,95 @@
     <title>Edit Item</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/edit-data.css">
 </head>
 
-<body class="bg-light">
+<body class="bg-light"></body>
     <div class="container mt-5">
         <h1 id="judul" class="text-primary text-center mb-4">Edit Item</h1>
 
-        <form id="itemForm" class="border p-4 bg-white shadow rounded" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label for="nama" class="form-label">Nama Item</label>
-                <input type="text" id="nama" name="nama" class="form-control" value="<%= barang.nama %>" required>
-            </div>
-            <div class="mb-3">
-                <label for="stok" class="form-label">Stok Item</label>
-                <input type="number" id="stok" name="stok" class="form-control" min="0" value="<%= barang.stok %>" required>
-            </div>
-            <div class="mb-3">
-                <label for="harga" class="form-label">Harga Item</label>
-                <input type="number" id="harga" name="harga" class="form-control" min="0" value="<%= barang.harga %>" required>
-            </div>
-            <div class="mb-3">
-                <label for="keterangan" class="form-label">Keterangan</label>
-                <input type="text" id="keterangan" name="keterangan" class="form-control" value="<%= barang.keterangan %>" required>
-            </div>
-            <div class="mb-3">
-                <label for="gambar" class="form-label">Upload Gambar</label>
-                <input type="file" id="gambar" name="gambar" class="form-control" accept="image/*">
-                <% if (barang.gambar) { %>
-                    <p class="mt-2">Gambar saat ini: <a href="/uploads/<%= barang.gambar %>" target="_blank"><%= barang.gambar %></a></p>
-                <% } %>
-            </div>
-            <input type="hidden" id="id" name="id" value="<%= barang.id %>">
-            <div class="d-flex justify-content-between">
-                <button type="submit" id="editData" class="btn btn-primary">Simpan Data Item</button>
-                <button type="button" id="batal" class="btn btn-secondary" onclick="history.back()">Kembali</button>
-            </div>
-        </form>
+        <div class="form-container">
+            <form id="itemForm" class="border p-4 bg-white shadow rounded" enctype="multipart/form-data">
+                <div class="form-section">
+                    <div class="mb-4">
+                        <label for="nama" class="form-label">Nama Item</label>
+                        <input type="text" id="nama" name="nama" class="form-control" value="<%= barang.nama %>" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="stok" class="form-label">Stok Item</label>
+                            <input type="number" id="stok" name="stok" class="form-control" min="0" value="<%= barang.stok %>" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label for="harga" class="form-label">Harga Item</label>
+                            <input type="number" id="harga" name="harga" class="form-control" min="0" value="<%= barang.harga %>" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="mb-4">
+                        <label for="keterangan" class="form-label">Keterangan</label>
+                        <textarea id="keterangan" name="keterangan" class="form-control" rows="3" required><%= barang.keterangan %></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="gambar" class="form-label">Upload Gambar</label>
+                        <input type="file" id="gambar" name="gambar" class="form-control" accept="image/*" onchange="previewImage(this)">
+                        <% if (barang.gambar) { %>
+                            <div class="current-image">
+                                <p class="mb-2">Gambar saat ini:</p>
+                                <img src="<%= barang.gambar %>" alt="Current image" class="img-fluid">
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+
+                <input type="hidden" id="id" name="id" value="<%= barang.id %>">
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="submit" id="editData" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Simpan Perubahan
+                    </button>
+                    <button type="button" id="batal" class="btn btn-secondary" onclick="history.back()">
+                        <i class="bi bi-arrow-left"></i> Kembali
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Add image preview functionality
+        function previewImage(input) {
+            const preview = document.querySelector('.current-image img');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (!preview) {
+                        // Create new preview if doesn't exist
+                        const newPreview = document.createElement('div');
+                        newPreview.className = 'current-image';
+                        newPreview.innerHTML = `
+                            <p class="mb-2">Preview gambar baru:</p>
+                            <img src="${e.target.result}" class="img-fluid" alt="Preview">
+                        `;
+                        input.parentElement.appendChild(newPreview);
+                    } else {
+                        preview.src = e.target.result;
+                    }
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Add form submission animation
         document.getElementById("itemForm").addEventListener("submit", async function(event) {
             event.preventDefault();
-        
+            const submitBtn = document.getElementById("editData");
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Menyimpan...';
+
             const formData = new FormData(this);
         
             const itemId = document.getElementById("id").value;

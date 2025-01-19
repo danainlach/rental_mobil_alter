@@ -913,4 +913,4 @@ async function createAndSendNotification(userId, type, message, targetId) {
 
 app.listen(port, hostnama, () => {
     console.log(`Server running at ${hostnama}:${port}`);
-});
+})
